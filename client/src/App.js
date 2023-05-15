@@ -1,41 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Redirect } from 'react-router-dom';
+import LoginPage from './LoginPage';
+import HomePage from './HomePage';
 
-function App() {
-    const [data, setData] = useState({
-        name: "",
-        date: ""
-    });
+const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch("http://127.0.0.1:5000/");
-                const jsonData = await response.json();
-                setData({
-                    name: jsonData.Name,
-                    date: jsonData.Date
-                });
-            } catch (error) {
-                console.log(error);
-            }
-        }
+  const handleLogin = (userData) => {
+    setIsLoggedIn(true);
+    setUserData(userData);
+  };
 
-        fetchData();
-
-    }, []);
-
-    console.log(data);
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserData(null);
+  };
 
   return (
-    <div className="App">
-        <header className="App-header">
-            <h1>Test</h1>
-            <p>{data.name}</p>
-            <p>{data.date}</p>
-        </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login">
+          {isLoggedIn ? <Redirect to="/" /> : <LoginPage onLogin={handleLogin} />}
+        </Route>
+        <Route path="/">
+          {isLoggedIn ? (
+            <HomePage onLogout={handleLogout} />
+          ) : (
+            <Redirect to="/login" />
+          )}
+        </Route>
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
