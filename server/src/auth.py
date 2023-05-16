@@ -24,7 +24,7 @@ def requires_token(f):
             data = jwt.decode(token, current_app.config['SECRET_KEY'])
             current_user = User.query.get(data)
         except:
-            return jsonify({'message': 'Token is invalid!'}), 401
+            return jsonify({'message': 'Token is invalid!'}), 402
         return f(current_user, *args, **kwargs)
     
     return decorated
@@ -32,11 +32,14 @@ def requires_token(f):
 
 
 # login
-@auth.route('/login', methods=['GET', 'POST'])
+@auth.route('/auth/login', methods=['POST'])
 def login():
-    # TODO
-    email = request.form.get('email')
-    password = request.form.get('password')
+    form_data = request.get_json()
+    email = form_data["email"]
+    password = form_data["password"]
+    print("email " + email)
+    print("password " + password)
+
     
     user = User.query.filter_by(email=email).first()
     if user:
@@ -60,7 +63,7 @@ def login():
 
 
 # logout
-@auth.route('/logout')
+@auth.route('/auth/logout')
 @requires_token
 def logout():
     # client side: remove token from cache and reset user session data
@@ -73,25 +76,28 @@ def logout():
 
 
 # register
-@auth.route('/register', methods=['POST'])
+@auth.route('/auth/register', methods=['POST'])
 def register():
-    email = request.form.get('email')
-    password = request.form.get('password')
-    password_confirmation = request.form.get('password_confirmation')
+    form_data = request.get_json()
+    email = form_data["email"]
+    password = form_data["password"]
+    # print("email " + email)
+    # print("password " + password)
 
     user = User.query.filter_by(email=email).first() # checks if user already exists
 
-    if user:
+    if user != None:
         return jsonify({'message': 'User already exists'}), 401
     # other string manipulation checks should be done on client side
     
     new_user = User(email=email, password=generate_password_hash(password, method='sha256'))
+    print("user generated")
     try:
         db.session.add(new_user)
         db.session.commit()
     except:
         db.session.rollback()
-        return jsonify({'message': 'Error occurred while registering the user.'}), 500
+        return jsonify({'message': 'Error occurred while registering the user.'}), 501
     
     return jsonify({'message': 'User successfully created!'}), 200
 

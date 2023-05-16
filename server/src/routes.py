@@ -1,9 +1,10 @@
-from flask import jsonify
-from app import app
+from flask import jsonify, current_app, Blueprint
 from .models import Battery, TimeSeriesData
 
+routes = Blueprint('routes', __name__)
+
 ## get all battery
-@app.route("/data", methods = ["GET"])
+@routes.route("/data", methods = ["GET"])
 def get_all_data():
     batteries = Battery.query.all()
 
@@ -18,7 +19,7 @@ def get_all_data():
     return jsonify(result), 200
 
 # TODO: get data over time
-@app.route("/data/<battery_id>", methods = ["GET"])
+@routes.route("/data/<battery_id>", methods = ["GET"])
 def get_by_id(battery_id):
     data = TimeSeriesData.query.filter_by(battery_id=battery_id).order_by(TimeSeriesData.timestamp.asc()).all()
 
