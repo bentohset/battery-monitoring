@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = ({ onLogin }) => {
-  const history = useHistory();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const navigate = useNavigate();
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -19,18 +20,31 @@ const LoginPage = ({ onLogin }) => {
 
     // Perform authentication logic
     // Here, you can make an API request to your backend for authentication
-
-    // Simulating successful authentication
-    const userData = {
+    const requestBody = {
       email: email,
-      // Include other user data if needed
+      password: password
     };
 
-    // Call the onLogin function to update the login status and store user data
-    onLogin(userData);
+    fetch("http://127.0.0.1:5000/auth/login", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    }).then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Login failed');
+      }
+    }).then(data => {
+      onLogin(data.token);
+    }).catch(error => {
+      console.error(error);
+    });
 
     // Redirect to the home page
-    history.push('/');
+    
   };
 
   return (
@@ -57,6 +71,9 @@ const LoginPage = ({ onLogin }) => {
         </div>
         <button type="submit">Login</button>
       </form>
+      <button className="btn" onClick={() => navigate('register-page')}>
+          RegisterPage
+       </button>
     </div>
   );
 };
