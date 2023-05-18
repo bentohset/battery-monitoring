@@ -1,5 +1,4 @@
-from src import create_app, create_database
-from src.routes import *
+from src import create_app
 
 app = create_app()
 
