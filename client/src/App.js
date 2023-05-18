@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Redirect } from 'react-router-d
 import LoginPage from './LoginPage';
 import HomePage from './HomePage';
 import RegisterPage from './RegisterPage';
+import ForgotPassword from './ForgotPassword';
+import ChangePassword from './ChangePassword';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -29,6 +31,8 @@ const App = () => {
         <>
           <Route path="/" element={<LoginPage onLogin={handleLogin}/>} />
           <Route path="/register-page" element={<RegisterPage onLogin={handleLogin}/>} />
+          <Route path="/forgot-password" element={<ForgotPassword/>}/>
+          <Route path="/auth/reset/:token" element={<ChangePassword/>}/>
         </>
       )}
     </Routes>

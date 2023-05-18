@@ -1,0 +1,52 @@
+.container {
+    padding: 16px;
+    border: 1px solid lightgray;
+    text-align: center;
+    display: flex;
+    height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    place-self: center;
+    flex-grow: 1;
+}
+.form {
+    text-align: left;
+    border: 3px solid lightgray;
+    padding: 16px;
+    border-radius: 8px;
+    width: 15%;
+}
+
+.input {
+    box-sizing: border-box;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.loginbutton {
+    margin-top: 10%;
+    width: 100%;
+    height: 36px;
+}
+
+.otherbuttons {
+    display: flex;
+    width: 100%;
+    margin-top: 10px;
+    justify-content:space-between;
+    gap: 16px;
+}
+
+.h2 {
+    text-align: center;
+}
+
+.emaillabel {
+    display: flex;
+    flex-direction: column;
+}
+
+.backbtn {
+    margin-top: 16px;
+}

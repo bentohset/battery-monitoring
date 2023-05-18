@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import Popup from 'reactjs-popup';
+import './home.css'
+import Modal from './Modal';
 
 const HomePage = ({ onLogout }) => {
   const [data, setData] = useState([])
+  const [modal, setModal] = useState(false)
 
   const handleLogout = () => {
     // Perform logout logic
@@ -13,10 +17,14 @@ const HomePage = ({ onLogout }) => {
     // Redirect to the login page
   };
 
+  const showModal = () => {
+    setModal(true);
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5000/data");
+        const response = await fetch("http://127.0.0.1:5000/data/table");
         const jsonData = await response.json();
         setData(jsonData);
       } catch (error) {
@@ -28,26 +36,42 @@ const HomePage = ({ onLogout }) => {
   }, []);
 
   return (
-    <div>
-      <h2>Welcome to the Home Page!</h2>
-      <p>You are now logged in.</p>
+    <div className='tcontainer'>
+      <Modal show={modal}></Modal>
+      <div className='titles'>
+        <h2>Battery Monitor</h2>
+        <button onClick={handleLogout} className='logoutbutton'>Logout</button>
+      </div>
       
-      <button onClick={handleLogout}>Logout</button>
-      <div>
-        <table>
-          <thead>
+      <div className='tablecontainer'> 
+        <table >
+          <thead className='header'>
             <tr>
-              <th>Battery_id</th>
-              <th>Shelf_id</th>
-              <th>Container_id</th>
+              <th>Battery ID</th>
+              <th>Shelf</th>
+              <th>Container</th>
+              <th>Timestamp</th>
+              <th>Humidity</th>
+              <th>Temperature</th>
+              <th>Voltage Open Circuit</th>
+              <th>Internal Series Resistance</th>
+              <th>Internal Impedance</th>
+              <th>Details</th>
             </tr>
           </thead>
           <tbody>
             {data.map((item) => (
-              <tr key={item.id}>
-                <td>{item.id}</td>
-                <td>{item.shelf}</td>
-                <td>{item.container}</td>
+              <tr key={item.battery_id} className='bodyrow'>
+                <td>{item.battery_id}</td>
+                <td>SHELF {item.shelf}</td>
+                <td>CONTAINER {item.container}</td>
+                <td>{item.timestamp}</td>
+                <td>{item.humidity}</td>
+                <td>{item.temperature}</td>
+                <td>{item.voltage_open_circuit}</td>
+                <td>{item.internal_series_resistance}</td>
+                <td>{item.internal_impedance}</td>
+                <td><button onClick={showModal}>Click</button></td>
               </tr>
             ))}
           </tbody>
@@ -58,3 +82,12 @@ const HomePage = ({ onLogout }) => {
 };
 
 export default HomePage;
+
+
+
+//   tablerow: {
+//     borderBottom: "1px solid #ddd"
+
+//   },
+//   tablerow:hover
+// }

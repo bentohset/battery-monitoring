@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './login.css'
 
 function RegisterPage({ onLogin }) {
     const [email, setEmail] = useState('');
@@ -51,32 +52,38 @@ function RegisterPage({ onLogin }) {
     };
   
     return (
-      <div>
-        <h2>Register Page</h2>
-        <form onSubmit={handleSubmit}>
-          <div>
+      <div className='container'>
+        <form onSubmit={handleSubmit} className='form'>
+          <h2 className='h2'>Register Page</h2>
+          <div className='emaillabel'>
             <label htmlFor="email">Email:</label>
             <input
               type="text"
               id="email"
               value={email}
               onChange={handleEmailChange}
+              className='input'
             />
           </div>
-          <div>
+          <div className='emaillabel'>
             <label htmlFor="password">Password:</label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={handlePasswordChange}
+              className='input'
             />
           </div>
-          <button type="submit">register</button>
+          <button type="submit" className='loginbutton'>Register</button>
+          <div className="otherbuttons">
+            <button className="btn" onClick={() => navigate('/')}>
+              Back
+            </button>
+          </div>
+          
         </form>
-        <button className="btn" onClick={() => navigate('/')}>
-            Back
-        </button>
+        
       </div>
     );
   };
