@@ -9,8 +9,6 @@ load_dotenv(path.join(basedir, '.env'))
 class Config(object):
     FLASK_APP = "app.py"
     DEBUG = True
-    TESTING = False
-    SQLALCHEMY_DATABASE_URI = environ.get("DATABASE_URL")
     SECRET_KEY = environ.get("SECRET_KEY")
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 465
@@ -23,9 +21,17 @@ class Config(object):
 
 class ProductionConfig(Config):
     FLASK_ENV = "production"
+    TESTING = False
+    SQLALCHEMY_DATABASE_URI = ""
     DEBUG = False
 
 class DevelopmentConfig(Config):
     FLASK_ENV = "development"
-    ENV = "development"
+    TESTING = False
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = environ.get("DATABASE_URL")
     DEVELOPMENT = True
+
+class TestingConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = environ.get("TEST_DATABASE_URL")

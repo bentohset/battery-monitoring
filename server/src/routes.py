@@ -1,5 +1,5 @@
 from flask import jsonify, current_app, Blueprint
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import aliased
 
 from .models import Battery, TimeSeriesData
@@ -49,14 +49,26 @@ def get_recent():
     b = aliased(Battery, name='b')
     r = aliased(TimeSeriesData, name='r')
 
-    query = select(r, b.shelf_id, b.container_id)\
-        .distinct(r.battery_id)\
-        .join(b, b.id == r.battery_id)\
-        .order_by(r.battery_id, r.timestamp.desc())
+    latest_subquery = db.session.query(
+        r.battery_id,
+        func.max(r.timestamp).label('latest_timestamp')
+    ).group_by(r.battery_id).subquery()
 
-    data = db.session.execute(query)
+    readings = db.session.query(
+        r,
+        b.shelf_id,
+        b.container_id
+    ).join(
+        latest_subquery,
+        db.and_(r.battery_id == latest_subquery.c.battery_id, r.timestamp == latest_subquery.c.latest_timestamp)
+    ).join(b).all()
 
-    for entry in data:
+    # query = select(r, b.shelf_id, b.container_id)\
+    #     .distinct(r.battery_id)\
+    #     .join(b, b.id == r.battery_id)\
+    #     .order_by(r.battery_id, r.timestamp.desc())
+
+    for entry in readings:
         result.append({
             'battery_id': entry.r.battery_id,
             'timestamp': entry.r.timestamp,

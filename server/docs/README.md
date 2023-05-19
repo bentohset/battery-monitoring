@@ -21,6 +21,8 @@ Status Codes
 # TODO
 
 - azure data pipeline
+- setup remote access to remote server
+
 
 
 # MS Azure Documentation:

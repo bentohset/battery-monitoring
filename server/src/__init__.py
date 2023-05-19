@@ -6,12 +6,12 @@ from flask_mailman import Mail
 db = SQLAlchemy()
 mail = Mail()
 
-def create_app():
+def create_app(config_module):
     app = Flask(__name__)
     cors = CORS(app)
 
-    app.config.from_object('src.config.DevelopmentConfig')      # change to ProductionConfig for prod
-    
+    app.config.from_object(config_module)     
+
     db.init_app(app)
     mail.init_app(app)
 
