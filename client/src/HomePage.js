@@ -5,7 +5,8 @@ import Modal from './Modal';
 
 const HomePage = ({ onLogout }) => {
   const [data, setData] = useState([])
-  const [modal, setModal] = useState(false)
+  const [modal, setModal] = useState(false);
+  const [id, setId] = useState("");
 
   const handleLogout = () => {
     // Perform logout logic
@@ -17,8 +18,16 @@ const HomePage = ({ onLogout }) => {
     // Redirect to the login page
   };
 
-  const showModal = () => {
+  const showModal = (id) => {
     setModal(true);
+    setId(id)
+    console.log(id)
+    console.log(modal)
+  }
+
+  const hideModal = () => {
+    setModal(false)
+    setId("")
   }
 
   useEffect(() => {
@@ -37,10 +46,11 @@ const HomePage = ({ onLogout }) => {
 
   return (
     <div className='tcontainer'>
-      <Modal show={modal}></Modal>
+      
       <div className='titles'>
         <h2>Battery Monitor</h2>
         <button onClick={handleLogout} className='logoutbutton'>Logout</button>
+        
       </div>
       
       <div className='tablecontainer'> 
@@ -71,12 +81,14 @@ const HomePage = ({ onLogout }) => {
                 <td>{item.voltage_open_circuit}</td>
                 <td>{item.internal_series_resistance}</td>
                 <td>{item.internal_impedance}</td>
-                <td><button onClick={showModal}>Click</button></td>
+                <td><button onClick={() => showModal(item.battery_id)}>Click</button></td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      <button onClick={hideModal} style={{marginTop:'16px'}}>close</button>
+      {modal && <Modal show={modal} id={id}></Modal>}
     </div>
   );
 };
