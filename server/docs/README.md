@@ -20,8 +20,9 @@ Status Codes
 
 # TODO
 
-- azure data pipeline
-- setup remote access to remote server
+- azure data pipeline test with sample module
+    - create new table in psql
+
 
 
 
