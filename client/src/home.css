@@ -2,8 +2,15 @@
     background-color: lightgray;
 }
 
+.main {
+    display:flex;
+    flex-direction: row;
+}
+
 .tcontainer {
-    padding: 16px;
+    margin-top: 70px;
+    display: flex;
+    flex-direction: row;
 }
 
 table {
@@ -26,20 +33,113 @@ td {
     padding: 4px;
 }
 
-.titles {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+.tablecontainer {
+    right:0;
+    margin-right: 15px;
+    width: 70%;
+    position: fixed;
+    height: 100%;
 }
 
 .modalcontainer{
-    padding: 16px;
+    margin-right: 10px;
+    margin-left: 6px;
+    padding-left: 4px;
+    padding-right: 8px;
     display: flex;
-    flex-direction: row;
-    gap: 16px;
+    flex-direction: column;
+    width: 100%;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    height: 100%;
 }
 
 .modalp {
     font-weight: bold;
+}
+
+.modaltitle {
+    font-weight: bolder;
+    font-size: large;
+    border-bottom: 1px solid gray;
+    width: 95%;
+}
+
+.navbar {
+    background-color:#C8C0FF;
+    height: min-content;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: fixed;
+    width: 100%;
+    z-index: 2;
+}
+
+nav > div > h2 {
+    margin-left: 2%;
+
+}
+
+nav > button {
+    margin-right: 2%;
+}
+
+nav > div {
+    display: flex;
+    height: fit-content;
+}
+
+.logoutbutton {
+    border: none;
+    outline: none;
+    background:none;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+}
+
+
+.buttoncontainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logouticon {
+    height: 60%;
+    width: 60%;
+}
+
+.drawerbutton {
+    border: none;
+    outline: none;
+    background:none;
+    width: 50px;
+    height: 50px;
+}
+
+.drawerbuttoncontainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.drawericon {
+    height: 60%;
+    width: 60%;
+}
+
+.titleleft {
+    display: flex;
+    flex-grow: inherit;
+    flex: auto;
+    justify-content: left;
+    align-items: center;
+    width: fit-content;
+    margin-left: 5px;
+    height:inherit;
+    width: inherit;
+    gap: -20px;
 }

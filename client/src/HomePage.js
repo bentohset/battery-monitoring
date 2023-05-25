@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Popup from 'reactjs-popup';
+import { ArrowLeftOnRectangleIcon, Bars3Icon } from '@heroicons/react/24/solid'
 import './home.css'
 import Modal from './Modal';
 
 const HomePage = ({ onLogout }) => {
   const [data, setData] = useState([])
-  const [modal, setModal] = useState(false);
   const [id, setId] = useState("");
 
   const handleLogout = () => {
@@ -19,15 +18,24 @@ const HomePage = ({ onLogout }) => {
   };
 
   const showModal = (id) => {
-    setModal(true);
     setId(id)
     console.log(id)
-    console.log(modal)
   }
 
-  const hideModal = () => {
-    setModal(false)
-    setId("")
+
+  const convertDate = (time) => {
+    const dateObj = new Date(time)
+    const date = dateObj.getDate().toString()
+    const month = (dateObj.getMonth()+1).toString()
+    const year = dateObj.getFullYear().toString()
+    const hour = dateObj.getHours().toString()
+    let timehour = hour
+    if (hour < 10) {
+      timehour = "0" + hour
+    }
+    const minute = dateObj.getMinutes().toString()
+
+    return date + '/' + month + '/' + year + " " + timehour + ":" + minute
   }
 
   useEffect(() => {
@@ -45,50 +53,59 @@ const HomePage = ({ onLogout }) => {
   }, []);
 
   return (
-    <div className='tcontainer'>
-      
-      <div className='titles'>
-        <h2>Battery Monitor</h2>
-        <button onClick={handleLogout} className='logoutbutton'>Logout</button>
+    <div className='main'>
+      <nav className='navbar'>
+        <div className='titleleft'>
+          <button className='drawerbutton'>
+            <div className='drawerbuttoncontainer'>
+              <Bars3Icon className='drawericon'/>
+            </div>
+          </button>
+          <h2>Battery Monitor</h2>
+        </div>
         
-      </div>
-      
-      <div className='tablecontainer'> 
-        <table >
-          <thead className='header'>
-            <tr>
-              <th>Battery ID</th>
-              <th>Shelf</th>
-              <th>Container</th>
-              <th>Timestamp</th>
-              <th>Humidity</th>
-              <th>Temperature</th>
-              <th>Voltage Open Circuit</th>
-              <th>Internal Series Resistance</th>
-              <th>Internal Impedance</th>
-              <th>Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item) => (
-              <tr key={item.battery_id} className='bodyrow'>
-                <td>{item.battery_id}</td>
-                <td>SHELF {item.shelf}</td>
-                <td>CONTAINER {item.container}</td>
-                <td>{item.timestamp}</td>
-                <td>{item.humidity}</td>
-                <td>{item.temperature}</td>
-                <td>{item.voltage_open_circuit}</td>
-                <td>{item.internal_series_resistance}</td>
-                <td>{item.internal_impedance}</td>
-                <td><button onClick={() => showModal(item.battery_id)}>Click</button></td>
+        <button onClick={handleLogout} className='logoutbutton'>
+          <div className='buttoncontainer'>
+          <ArrowLeftOnRectangleIcon className='logouticon'/>
+          </div>
+        </button>
+      </nav>
+
+      <div className='tcontainer'>
+        <Modal id={id}/>
+        <div className='tablecontainer'> 
+          <table >
+            <thead className='header'>
+              <tr>
+                <th>Battery ID</th>
+                <th>Shelf</th>
+                <th>Container</th>
+                <th>24hr Timestamp</th>
+                <th>Humidity</th>
+                <th>Temperature</th>
+                <th>Internal Series Resistance</th>
+                <th>Internal Impedance</th>
+                <th>Details</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.map((item) => (
+                <tr key={item.battery_id} className='bodyrow'>
+                  <td>{item.battery_id}</td>
+                  <td>SHELF {item.shelf}</td>
+                  <td>CONTAINER {item.container}</td>
+                  <td>{convertDate(item.timestamp)}</td>
+                  <td>{item.humidity}</td>
+                  <td>{item.temperature}</td>
+                  <td>{item.internal_series_resistance}</td>
+                  <td>{item.internal_impedance}</td>
+                  <td><button onClick={() => showModal(item.battery_id)}>Click</button></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <button onClick={hideModal} style={{marginTop:'16px'}}>close</button>
-      {modal && <Modal show={modal} id={id}></Modal>}
     </div>
   );
 };
