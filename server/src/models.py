@@ -23,7 +23,6 @@ class TimeSeriesData(db.Model):
     ble_uuid = db.Column(db.String(255), nullable=False)
     humidity = db.Column(db.Float)
     temperature = db.Column(db.Float)
-    voltage_open_circuit = db.Column(db.Float)
     internal_series_resistance = db.Column(db.Float)
     internal_impedance = db.Column(db.Float)
     timestamp = db.Column(db.TIMESTAMP) # recorded every few hours

@@ -35,7 +35,6 @@ def get_by_id(battery_id):
             'ble_uuid': entry.ble_uuid,
             'humidity': entry.humidity,
             'temperature': entry.temperature,
-            'voltage_open_circuit': entry.voltage_open_circuit,
             'internal_series_resistance': entry.internal_series_resistance,
             'internal_impedance': entry.internal_impedance
         })
@@ -77,7 +76,6 @@ def get_recent():
             'ble_uuid': entry.r.ble_uuid,
             'humidity': entry.r.humidity,
             'temperature': entry.r.temperature,
-            'voltage_open_circuit': entry.r.voltage_open_circuit,
             'internal_series_resistance': entry.r.internal_series_resistance,
             'internal_impedance': entry.r.internal_impedance
         })
