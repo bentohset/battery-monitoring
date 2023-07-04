@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeftOnRectangleIcon, Bars3Icon } from '@heroicons/react/24/solid'
-import './home.css'
-import Modal from './Modal';
+import '../styles/home.css'
+import Modal from '../components/Modal';
 
 const HomePage = ({ onLogout }) => {
   const [data, setData] = useState([])
@@ -80,7 +80,7 @@ const HomePage = ({ onLogout }) => {
                 <th>Battery ID</th>
                 <th>Shelf</th>
                 <th>Container</th>
-                <th>24hr Timestamp</th>
+                <th>Last Measured</th>
                 <th>Humidity</th>
                 <th>Temperature</th>
                 <th>Internal Series Resistance</th>
@@ -95,10 +95,10 @@ const HomePage = ({ onLogout }) => {
                   <td>SHELF {item.shelf}</td>
                   <td>CONTAINER {item.container}</td>
                   <td>{convertDate(item.timestamp)}</td>
-                  <td>{item.humidity}</td>
-                  <td>{item.temperature}</td>
-                  <td>{item.internal_series_resistance}</td>
-                  <td>{item.internal_impedance}</td>
+                  <td>{item.humidity.toFixed(4)}</td>
+                  <td>{item.temperature.toFixed(4)}</td>
+                  <td>{item.internal_series_resistance.toFixed(4)}</td>
+                  <td>{item.internal_impedance.toFixed(4)}</td>
                   <td><button onClick={() => showModal(item.battery_id)}>Click</button></td>
                 </tr>
               ))}

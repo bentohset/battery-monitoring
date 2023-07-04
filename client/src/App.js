@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Redirect } from 'react-router-dom';
-import LoginPage from './LoginPage';
-import HomePage from './HomePage';
-import RegisterPage from './RegisterPage';
-import ForgotPassword from './ForgotPassword';
-import ChangePassword from './ChangePassword';
+import LoginPage from './pages/LoginPage';
+import HomePage from './pages/HomePage';
+import RegisterPage from './pages/RegisterPage';
+import ForgotPassword from './pages/ForgotPassword';
+import ChangePassword from './pages/ChangePassword';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
