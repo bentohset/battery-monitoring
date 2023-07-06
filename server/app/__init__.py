@@ -1,0 +1,45 @@
+from flask import Flask, jsonify
+from flask_cors import CORS, cross_origin
+from config import DevelopmentConfig, ProductionConfig, TestingConfig
+import os
+from app.extensions import db, mail
+from app.common import status
+
+def create_app():
+    app = Flask(__name__)
+    cors = CORS(app)
+
+    # Init config state
+    env = os.environ.get("FLASK_ENV", "development")
+    if env == "production":
+        app.config.from_object(ProductionConfig)
+    elif env == "development":
+        app.config.from_object(DevelopmentConfig)
+    else:
+        app.config.from_object(TestingConfig)
+
+
+    # Initialize Flask extensions
+    db.init_app(app)
+    mail.init_app(app)
+
+
+    # Register blueprints
+    from app.main import bp as main_bp
+    app.register_blueprint(main_bp)
+
+    from app.auth import bp as auth_bp
+    app.register_blueprint(auth_bp, url_prefixes='/auth')
+
+    from app.batteries import bp as batteries_bp
+    app.register_blueprint(batteries_bp, url_prefix='/battery')
+
+
+    @app.route("/test")
+    def test():
+        return jsonify({'message': 'hello backend'}), status.HTTP_200_OK
+
+    with app.app_context():
+        db.create_all()
+
+    return app

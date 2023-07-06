@@ -1,5 +1,16 @@
 # Backend Flask Documentation
 
+```
+venv/scripts/activate
+$env:FLASK_ENV = ["development" | "production" | "testing"]
+flask run
+```
+
+set environment variables:
+```
+$env:FLASK_ENV = 
+```
+
 Routes packet format
 ```
 {
