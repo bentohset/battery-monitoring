@@ -79,6 +79,10 @@ def get_recent():
             'internal_series_resistance': entry.r.internal_series_resistance,
             'internal_impedance': entry.r.internal_impedance
         })
+    def get_id(elem):
+        return elem['battery_id']
+
+    sorted_result = sorted(result, key=get_id)
     
-    return jsonify(result), status.HTTP_200_OK
+    return jsonify(sorted_result), status.HTTP_200_OK
 
