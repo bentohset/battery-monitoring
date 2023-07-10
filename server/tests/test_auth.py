@@ -33,7 +33,6 @@ def test_login_invalid_email(client, init_db):
         json=user
     )
     data = response.get_json()
-    print(data)
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -60,7 +59,10 @@ def test_register_success(client):
         json=user
     )
 
+
     assert response.status_code == status.HTTP_201_CREATED
+    data = response.get_json()
+    assert 'token' in data
 
 
 def test_register_user_exists(client, init_db):

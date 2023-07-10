@@ -119,7 +119,6 @@ def logout():
     token = request.headers['Authorization'].split()[1]
     token_blacklist.add(token)
     response = jsonify({'message': 'logout successful'})
-    unset_jwt_cookies(response)
 
     return response, status.HTTP_200_OK
 
@@ -141,7 +140,10 @@ def register():
     # other string manipulation checks should be done on client side
     
     new_user = User(email=email, password_str=password)
-
+    token = jwt.encode({
+            'id':new_user.id
+        }, current_app.config['SECRET_KEY'], algorithm='HS256')
+    
     try:
         db.session.add(new_user)
         print("user added")
@@ -152,7 +154,7 @@ def register():
         db.session.rollback()
         return jsonify({'message': 'Error occurred while registering the user.'}), status.HTTP_503_SERVICE_UNAVAILABLE
     
-    return jsonify({'message': 'User successfully created!'}), status.HTTP_201_CREATED
+    return jsonify({'token': token}), status.HTTP_201_CREATED
 
 
 
