@@ -62,6 +62,7 @@ export const AuthProvider = ({ children }) => {
 			login,
 			register,
 			logout
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		}), [cookies]
 	)
     
