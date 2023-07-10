@@ -25,6 +25,7 @@ venv.bak/
 yarn-error.log/
 /yarn-error.log
 */yarn-error.log
+.coverage
 
 #env files
 .env
