@@ -8,7 +8,7 @@ from app.common import status
 def create_app():
     app = Flask(__name__)
     cors = CORS(app)
-
+    
     # Init config state
     env = os.environ.get("FLASK_ENV", "development")
     if env == "production":
@@ -26,14 +26,12 @@ def create_app():
 
     # Register blueprints
     from app.main import bp as main_bp
+    from app.auth import auth_bp
+    from app.batteries import battery_bp
+
     app.register_blueprint(main_bp)
-
-    from app.auth import bp as auth_bp
-    app.register_blueprint(auth_bp, url_prefixes='/auth')
-
-    from app.batteries import bp as batteries_bp
-    app.register_blueprint(batteries_bp, url_prefix='/battery')
-
+    app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(battery_bp, url_prefix='/battery')
 
     @app.route("/test")
     def test():

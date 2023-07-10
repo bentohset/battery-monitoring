@@ -1,17 +1,17 @@
-from flask import Blueprint, current_app, jsonify, request
+from flask import current_app, jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from threading import Thread
 import jwt
 import datetime
-from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
-                               unset_jwt_cookies, jwt_required, JWTManager
+from flask_jwt_extended import unset_jwt_cookies
 from flask_mailman import EmailMessage
 
-from app.models.user import User
-from app.common import status
+from app.auth import auth_bp
 from app.extensions import db
-from app.auth import bp
+from app.common import status
+
+from app.models.user import User
 
 token_blacklist = set()
 
@@ -86,39 +86,32 @@ Login, register, logout, protected
 '''
 
 # login
-@bp.route('/auth/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST'])
 def login():
     form_data = request.get_json()
     email = form_data["email"]
     password = form_data["password"]
-    print("email " + email)
-    print("password " + password)
-
     
     user = User.query.filter_by(email=email).first()
-    if user:
-        user
-        if check_password_hash(user.password, password):
-            # correct, authenticate and get token
-            print("successful login")
-            token = jwt.encode({
-                'id':user.id
-            }, current_app.config['SECRET_KEY'], algorithm='HS256')
-
-            return jsonify({'token': token}), status.HTTP_200_OK
-        else: 
-            return jsonify({'message': 'Invalid password'}), status.HTTP_401_UNAUTHORIZED
-        
-    else:
+    if not user:
         return jsonify({'message': 'Invalid email'}), status.HTTP_404_NOT_FOUND
+    
+    if user.is_password_correct(password):
+        token = jwt.encode({
+            'id':user.id
+        }, current_app.config['SECRET_KEY'], algorithm='HS256')
 
+        return jsonify({'token': token}), status.HTTP_201_CREATED
+    else: 
+        return jsonify({'message': 'Invalid password'}), status.HTTP_401_UNAUTHORIZED
+    
 
     return jsonify({'message': 'Unhandled exception. Will never reach here'}), status.HTTP_400_BAD_REQUEST
 
 
 
 # logout
-@bp.route('/auth/logout')
+@auth_bp.route('/logout')
 @requires_token
 def logout():
     # client side: remove token from cache and reset user session data
@@ -133,7 +126,7 @@ def logout():
 
 
 # register
-@bp.route('/auth/register', methods=['POST'])
+@auth_bp.route('/register', methods=['POST'])
 def register():
     form_data = request.get_json()
     email = form_data["email"]
@@ -147,8 +140,8 @@ def register():
         return jsonify({'message': 'User already exists'}), status.HTTP_409_CONFLICT
     # other string manipulation checks should be done on client side
     
-    new_user = User(email=email, password=generate_password_hash(password, method='sha256'))
-    print("user generated")
+    new_user = User(email=email, password_str=password)
+
     try:
         db.session.add(new_user)
         print("user added")
@@ -159,13 +152,13 @@ def register():
         db.session.rollback()
         return jsonify({'message': 'Error occurred while registering the user.'}), status.HTTP_503_SERVICE_UNAVAILABLE
     
-    return jsonify({'message': 'User successfully created!'}), status.HTTP_200_OK
+    return jsonify({'message': 'User successfully created!'}), status.HTTP_201_CREATED
 
 
 
 
 # protected route, acts as gatekeeper for resources that require auth
-@bp.route('/auth/protected', methods=['GET'])
+@auth_bp.route('/auth/protected', methods=['GET'])
 @requires_token
 def protected(current_user):
     return jsonify({'message': 'Successfully logged in. Redirecting...'}), status.HTTP_200_OK
@@ -181,7 +174,7 @@ check if email exists within database
 if exists, create reset token (valid for 15min) send link to user email
 """
 
-@bp.route('/auth/forgot', methods=['POST'])
+@auth_bp.route('/forgot', methods=['POST'])
 def submit_email():
     form_data = request.get_json()
     email = form_data["email"]
@@ -219,7 +212,7 @@ def submit_email():
 
 
 # check if token is valid. if valid, ask for password and update db user entry password
-@bp.route('/auth/reset/<token>', methods=['GET'])
+@auth_bp.route('/reset/<token>', methods=['GET'])
 def get_reset_token(token):
     #decode token, check if expired or invalid
     decoded_token = decode_reset_token(token)
@@ -241,7 +234,7 @@ def get_reset_token(token):
 
 
 # update password and set user requesting status as false
-@bp.route('/auth/reset/<token>', methods=['POST'])
+@auth_bp.route('/reset/<token>', methods=['POST'])
 def update_password(token):
     form_data = request.get_json()
     new_password = form_data["new_password"]

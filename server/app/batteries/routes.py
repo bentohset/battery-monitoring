@@ -2,7 +2,7 @@ from flask import jsonify, current_app
 from sqlalchemy import select, func
 from sqlalchemy.orm import aliased
 
-from app.batteries import bp
+from app.batteries import battery_bp
 from app.extensions import db
 from app.common import status
 
@@ -10,7 +10,7 @@ from app.models.battery import Battery
 from app.models.timeseriesdata import TimeSeriesData
 
 ## get all battery
-@bp.route("/", methods = ["GET"])
+@battery_bp.route("/", methods = ["GET"])
 def get_all_data():
     batteries = Battery.query.all()
 
@@ -25,7 +25,7 @@ def get_all_data():
     return jsonify(result), status.HTTP_200_OK
 
 # gets data of battery with battery id, returns array of readings sorted by time ascending
-@bp.route("/<battery_id>", methods = ["GET"])
+@battery_bp.route("/<battery_id>", methods = ["GET"])
 def get_by_id(battery_id):
     data = TimeSeriesData.query.filter_by(battery_id=battery_id).order_by(TimeSeriesData.timestamp.asc()).all()
 
@@ -47,7 +47,7 @@ def get_by_id(battery_id):
     return jsonify(result), status.HTTP_200_OK
 
 ## get current data / latest data for each battery
-@bp.route("/table", methods = ["GET"])
+@battery_bp.route("/table", methods = ["GET"])
 def get_recent():
     result = []
     b = aliased(Battery, name='b')
