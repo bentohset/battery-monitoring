@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/login.css'
+import { useAuth } from '../hooks/auth';
 
-function RegisterPage({ onLogin }) {
+function RegisterPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { register } = useAuth()
   
     const navigate = useNavigate();
-    const token = "secret_key"
   
     const handleEmailChange = (e) => {
       setEmail(e.target.value);
@@ -17,45 +18,26 @@ function RegisterPage({ onLogin }) {
       setPassword(e.target.value);
     };
   
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
       e.preventDefault();
   
-      // Perform authentication logic
-      // Here, you can make an API request to your backend for authentication
-      const requestBody = {
-        email: email,
-        password: password
-      };
+      if (!email || !password) {
+        return 
+      }
   
-      fetch("http://127.0.0.1:5000/auth/register", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestBody)
-      }).then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error('Registration failed');
-        }
-      }).then(data => {
-        onLogin(token);
+      const res = await register({email, password})
+      if (res === "Success") {
         navigate('/')
-      }).catch(error => {
-        console.error(error);
-      });
+      }
   
-      // Call the onLogin function to update the login status and store user data
-  
-      // Redirect to the home page
     };
   
     return (
       <div className='container'>
+        <div style={{ width:'25%', height:'45%', backgroundColor:'white', flexDirection:'column', display: 'flex', borderRadius:'10px', paddingTop:'20px', justifyContent:'center', alignItems:'center'}}>
         <form onSubmit={handleSubmit} className='form'>
           <h2 className='h2'>Register Page</h2>
-          <div className='emaillabel'>
+          <div className='emaillabel' style={{marginBottom: '20px', marginTop:'40px'}}>
             <label htmlFor="email">Email:</label>
             <input
               type="text"
@@ -75,15 +57,13 @@ function RegisterPage({ onLogin }) {
               className='input'
             />
           </div>
-          <button type="submit" className='loginbutton'>Register</button>
-          <div className="otherbuttons">
-            <button className="btn" onClick={() => navigate('/')}>
-              Back
-            </button>
+          <button type="submit" className='loginbutton' style={{ fontWeight:'700', cursor:'pointer'}}>Register</button>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'center'}}>
+            <p style={{fontSize:15, textAlign:'center'}}>Alread have an account? <span onClick={() => navigate('/')} style={{fontWeight:700, cursor:'pointer'}}>Sign in here</span></p>
           </div>
           
         </form>
-        
+        </div>
       </div>
     );
   };

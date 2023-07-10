@@ -2,18 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeftOnRectangleIcon, Bars3Icon } from '@heroicons/react/24/solid'
 import '../styles/home.css'
 import Modal from '../components/Modal';
+import { useAuth } from '../hooks/auth';
 
-const HomePage = ({ onLogout }) => {
+const HomePage = () => {
   const [data, setData] = useState([])
   const [id, setId] = useState("");
+  const { logout } = useAuth()
 
   const handleLogout = () => {
     // Perform logout logic
     // Here, you can clear any authentication tokens or user data
 
     // Call the onLogout function to update the login status
-    onLogout();
-
+    logout()
     // Redirect to the login page
   };
 
@@ -41,8 +42,9 @@ const HomePage = ({ onLogout }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5000/data/table");
+        const response = await fetch("http://127.0.0.1:5000/battery/table");
         const jsonData = await response.json();
+        console.log(jsonData)
         setData(jsonData);
       } catch (error) {
         console.error(error)
@@ -56,18 +58,11 @@ const HomePage = ({ onLogout }) => {
     <div className='main'>
       <nav className='navbar'>
         <div className='titleleft'>
-          <button className='drawerbutton'>
-            <div className='drawerbuttoncontainer'>
-              <Bars3Icon className='drawericon'/>
-            </div>
-          </button>
           <h2>Battery Monitor</h2>
         </div>
         
         <button onClick={handleLogout} className='logoutbutton'>
-          <div className='buttoncontainer'>
-          <ArrowLeftOnRectangleIcon className='logouticon'/>
-          </div>
+          Logout
         </button>
       </nav>
 
@@ -83,7 +78,6 @@ const HomePage = ({ onLogout }) => {
                 <th>Last Measured</th>
                 <th>Humidity</th>
                 <th>Temperature</th>
-                <th>Internal Series Resistance</th>
                 <th>Internal Impedance</th>
                 <th>Details</th>
               </tr>
@@ -97,7 +91,6 @@ const HomePage = ({ onLogout }) => {
                   <td>{convertDate(item.timestamp)}</td>
                   <td>{item.humidity.toFixed(4)}</td>
                   <td>{item.temperature.toFixed(4)}</td>
-                  <td>{item.internal_series_resistance.toFixed(4)}</td>
                   <td>{item.internal_impedance.toFixed(4)}</td>
                   <td><button onClick={() => showModal(item.battery_id)}>Click</button></td>
                 </tr>

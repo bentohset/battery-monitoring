@@ -43,8 +43,9 @@ function ForgotPassword() {
 
   return (
     <div className='container'>
+      <div style={{ width:'25%',height:'22%', backgroundColor:'white', flexDirection:'column', display: 'flex', borderRadius:'10px', paddingTop:'20px', justifyContent:'center', alignItems:'center'}}>
         <form onSubmit={handleSubmit} className='form'>
-            <div className='emaillabel'>
+            <div className='emaillabel' style={{}}>
               <label htmlFor="email">Verify Email:</label>
               <input
                   type="text"
@@ -63,6 +64,7 @@ function ForgotPassword() {
             ): (<></>)}
             
       </form>
+      </div>
     </div>
   )
 }

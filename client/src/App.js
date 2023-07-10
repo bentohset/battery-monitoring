@@ -5,32 +5,23 @@ import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
 import ForgotPassword from './pages/ForgotPassword';
 import ChangePassword from './pages/ChangePassword';
+import { useAuth } from './hooks/auth';
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [token, setToken] = useState(null);
+  const { cookies } = useAuth()
 
-  const handleLogin = (userData) => {
-    setIsLoggedIn(true);
-    setToken(token);
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setToken(null);
-  };
 
   return (
     <>
     <Routes>
-      {isLoggedIn ? (
+      {cookies.token ? (
         <>
-          <Route path="/" element={<HomePage onLogout={handleLogout}/>} />
+          <Route path="/" element={<HomePage/>} />
         </>
       ) : (
         <>
-          <Route path="/" element={<LoginPage onLogin={handleLogin}/>} />
-          <Route path="/register-page" element={<RegisterPage onLogin={handleLogin}/>} />
+          <Route path="/" element={<LoginPage/>} />
+          <Route path="/register-page" element={<RegisterPage/>} />
           <Route path="/forgot-password" element={<ForgotPassword/>}/>
           <Route path="/auth/reset/:token" element={<ChangePassword/>}/>
         </>

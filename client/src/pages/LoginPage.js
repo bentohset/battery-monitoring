@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/login.css'
+import { useAuth } from '../hooks/auth';
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login } = useAuth()
 
   const navigate = useNavigate();
 
@@ -16,43 +18,26 @@ const LoginPage = ({ onLogin }) => {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Perform authentication logic
-    // Here, you can make an API request to your backend for authentication
-    const requestBody = {
-      email: email,
-      password: password
-    };
+    if (!email || !password) {
+      return 
+    }
+    const res = await login({email, password})
 
-    fetch("http://127.0.0.1:5000/auth/login", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestBody)
-    }).then(response => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error('Login failed');
-      }
-    }).then(data => {
-      onLogin(data.token);
-    }).catch(error => {
-      console.error(error);
-    });
+    if (res === "Success") {
+      navigate('/')
+    } 
 
-    // Redirect to the home page
-    
-  };
+  }
 
   return (
     <div className='container'>
-      <div style={{ backgroundColor:'white', display: 'flex', borderRadius:'10px', width: '25%', height: '50%', padding:'20px', justifyContent:'center', alignItems:''}}>
+      <div style={{ backgroundColor:'white', flexDirection:'column', display: 'flex', borderRadius:'10px', padding:'0px', justifyContent:'center', alignItems:'center'}}>
         <form onSubmit={handleSubmit} className='form'>
-          <h2 className='h2'>Login</h2>
+          <h2 className='h2'>Battery Monitoring Dashboard</h2>
+          <h2 className='h2' style={{fontSize:20}}>Login</h2>
           <div className='emaillabel' style={{marginBottom: '20px', marginTop:'40px'}}>
             <label htmlFor="email">Email:</label>
             <input
@@ -76,14 +61,10 @@ const LoginPage = ({ onLogin }) => {
               
             />
           </div>
-          <button type="submit" className='loginbutton' style={{ fontWeight:'700'}}>Login</button>
-          <div className="otherbuttons">
-            <button onClick={() => navigate('register-page')} className='smallbutton'>
-              Register
-            </button>
-            <button onClick={() => navigate('forgot-password')} className='smallbutton'>
-              Forgot Password
-            </button>
+          <button type="submit" className='loginbutton' style={{ fontWeight:'700', cursor:'pointer'}}>Login</button>
+          <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center'}}>
+            <p style={{fontSize:15, textAlign:'center'}}>Don't have an account? <span onClick={() => navigate('register-page')} style={{fontWeight:700, cursor:'pointer'}}>Register here</span></p>
+            <p onClick={() => navigate('forgot-password')} style={{marginTop:'0px', cursor:'pointer'}}>Forgot password</p>
           </div>
           
         </form>
