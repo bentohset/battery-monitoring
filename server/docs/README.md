@@ -11,31 +11,6 @@ set environment variables:
 $env:FLASK_ENV = 
 ```
 
-Routes packet format
-```
-{
-    "message": String
-}, status_code
-```
-
-Status Codes
-|Code |Description |
-|:----|:---------- |
-|200  |Sucess |
-|500  |Internal server error unhandled |
-|400  |Bad request: server cannot request due to client error |
-|401  |Unauthenticated: client must authenticate to get a response |
-|403  |Forbidden: client no access rights (identity is known) |
-|404  |cannot find the requested resource, url not recognised |
-
-
-# TODO
-
-- azure data pipeline test with sample module
-    - create new table in psql
-
-
-
 
 # MS Azure Documentation:
 
