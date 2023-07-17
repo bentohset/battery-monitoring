@@ -12,8 +12,7 @@ const char* mqttClientId = "esp32-gateway";
 WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
 
-// TODO: create a mqtt server inside azure iot edge module
-// esp32gateway -> mqttServer module -routethru-> battery module
+// Module: generates random values for each field and publishes it on the MQTT topic
 
 void setupWifi() {
   WiFi.begin(ssid, password);
@@ -32,26 +31,26 @@ void MQTTConnect() {
     if (mqttClient.connect(mqttClientId)) {
       Serial.println("MQTT connected");
 
-      // Once connected, publish an announcement...
-      // mqttClient.publish("esp32/","hello");
-
       // Subscribe to topics, one topic per line.
       mqttClient.subscribe(mqttTopic);
     } else {
       Serial.print("MQTT : Failed to connect to MQTT , rc=");
       Serial.print(mqttClient.state());
       Serial.println("MQTT : Trying again to connect to MQTT in 5 seconds");
+
       // Wait 5 seconds before retrying
       delay(5000);
     }
   }
 }
 
+// TODO: handle data from downstream device
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived on topic: ");
   Serial.println(topic);
   Serial.print("received message: ");
-  //when message is received forward it to server TODO
+
+  //when message is received forward it to server
   for (int i = 0; i < length; i++) {
     Serial.print((char)payload[i]);
   }
@@ -59,7 +58,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
 }
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(115200);
   randomSeed(analogRead(0));
   setupWifi();
@@ -69,12 +67,13 @@ void setup() {
 }
 
 void loop() {
-  //Connect to MQTT and reconnect if connection drops
+  // Connect to MQTT and reconnect if connection drops
   if (!mqttClient.connected()) {
     MQTTConnect();
   }
   mqttClient.loop();
 
+  // generates randomised data
   int battery_id = random(0,20);
   String ble_uuid = "abcdeg";
   float humidity = random(0,1000) / 100.0;
