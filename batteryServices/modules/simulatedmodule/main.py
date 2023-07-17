@@ -2,6 +2,9 @@
 # Licensed under the MIT license. See LICENSE file in the project root for
 # full license information.
 
+"""
+Simulates data from a bridge to route to other modules
+"""
 import asyncio
 import sys
 import signal
@@ -24,12 +27,15 @@ def create_client():
 
     return client
 
-
+""" The main routine of this module """
 async def run_sample(client):
     # Customize this coroutine to do whatever tasks the module initiates
-    # e.g. sending messages
+
+    # set a global counter such that the number of messages does not exceed the MAX_MESSAGE 
+    # for Azure free tier only 8k messages per day
     global count
     while count < MAX_MESSAGE:
+        # create randomized values for each field
         battery_id = random.randint(1, 20)
         ble_uuid = "abcdefg"
         humidity = random.uniform(20,80)
@@ -48,10 +54,12 @@ async def run_sample(client):
             "timestamp": timestamp,
         }
 
+        # store values into a json and create a Message object (azure sdk)
         payload_str = json.dumps(payload)
         print(payload_str)
         message = Message(payload_str)
         
+        # sends to the output and increment counter
         await client.send_message_to_output(message, "output1")
         count += 1
         print(f"Count: {count}")

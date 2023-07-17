@@ -2,6 +2,10 @@
 # Licensed under the MIT license. See LICENSE file in the project root for
 # full license information.
 
+"""
+Receives data from mqtt module and inserts into local database
+"""
+
 import asyncio
 import sys
 import ast
@@ -20,34 +24,11 @@ pg_connection_string = "host=192.168.0.104 user=postgres password=3logytech! dbn
 TEMPERATURE_THRESHOLD = 25
 TWIN_CALLBACKS = 0
 RECEIVED_MESSAGES = 0
-   
-def insert_psql_test(message_json):
-    conn = psycopg2.connect(
-        database="temperature_sensor",
-        user="postgres",
-        host="192.168.0.104",
-        password="3logytech!"
-    )
-    print("db connected")
-    print(conn)
-    cursor = conn.cursor()
-    try:
-        machine_query = "INSERT INTO tempreadings(measurement_time, location, temperature) VALUES ('" + str(message_json["timeCreated"]) + "', 'machine', '"+ str(message_json["machine"]["temperature"]) + "');"
-        ambient_query = "INSERT INTO tempreadings(measurement_time, location, temperature) VALUES ('" + str(message_json["timeCreated"]) + "', 'ambient', '"+ str(message_json["ambient"]["temperature"]) + "');"
-        cursor.execute(machine_query + ";" + ambient_query)
-        conn.commit()
-        print("inserted into PSQL successfully")
-    except Exception as e:
-        print("Error occurred while inserting data into PostgreSQL:", str(e))
-        conn.rollback()
-        
-    finally:
-        # Close the database connection
-        cursor.close()
-        conn.close()
 
+# function to insert JSON into PostgreSQL DB
 def insert_psql(message_json):
     try:
+        # opens a connection
         conn = psycopg2.connect(
             database="temperature_sensor",
             user="postgres",
@@ -59,7 +40,7 @@ def insert_psql(message_json):
         print("Error connecting to DB: ", str(e))
 
     try:
-
+        # constructs query and executes it
         query = """
         INSERT INTO readings (battery_id, ble_uuid, humidity, temperature, internal_series_resistance, internal_impedance, timestamp)
         VALUES (%(battery_id)s, %(ble_uuid)s, %(humidity)s, %(temperature)s, %(internal_series_resistance)s, %(internal_impedance)s, %(timestamp)s)
@@ -87,11 +68,13 @@ def insert_psql(message_json):
         cursor.close()
         conn.close()
 
-
+""" 
+Main routine of this module:
+creates the client with respective event handlers
+"""
 def create_client():
     print("creating client")
     client = IoTHubModuleClient.create_from_edge_environment()
-
 
     # Define function for handling received messages
     async def receive_message_handler(message):
@@ -106,15 +89,19 @@ def create_client():
         RECEIVED_MESSAGES += 1
         print("Total messages received: {}".format(RECEIVED_MESSAGES))
 
+        # checks if messages are received from the correct input and converts into JSON
         if message.input_name == "input1":
             message_format = str(message_text).replace("'", '"')
             message_json = json.loads(message_format)
             insert_psql(message_json)
 
+            # sends "useless" data to the output (purpose already fulfilled above when inserted into DB)
             await client.send_message_to_output(message, "output1")
 
-    # Define function for handling received twin patches
+    # Define function for handling received twin patches (aka exact same data)
+    # NOTE: should not be running, to be repurposed for future
     async def receive_twin_patch_handler(twin_patch):
+        # code here is from sample taken online
         global TEMPERATURE_THRESHOLD
         global TWIN_CALLBACKS
         print("Twin Patch received")
@@ -141,19 +128,9 @@ def create_client():
 async def run_sample(client):
     # Customize this coroutine to do whatever tasks the module initiates
     # e.g. sending messages
-    
 
     while True:
-        # received_message = await client.receive_message_on_input("input1")
-        # if received_message:
-        #     message_text = received_message.data.decode("utf-8")
-        #     message_json = json.loads(message_text)
-            
-
         await asyncio.sleep(100)
-
-    cursor.close()
-    conn.close()
 
 
 def main():

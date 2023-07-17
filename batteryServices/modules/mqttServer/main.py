@@ -2,6 +2,10 @@
 # Licensed under the MIT license. See LICENSE file in the project root for
 # full license information.
 
+""" 
+Receives data through MQTT Port on the Edge Device and routes it to the next module
+"""
+
 import asyncio
 import sys
 import signal
@@ -15,6 +19,7 @@ from paho.mqtt import client as mqtt
 # Event indicating client stop
 stop_event = threading.Event()
 
+# Constants for MQTT config
 mqtt_broker = "192.168.0.104"
 mqtt_port = 8883
 mqtt_topic = "battery/telemetry"
@@ -22,41 +27,19 @@ mqtt_topic = "battery/telemetry"
 def create_client():
     client = IoTHubModuleClient.create_from_edge_environment()
 
-    # # Define function for handling received messages
-    # async def receive_message_handler(message):
-    #     # NOTE: This function only handles messages sent to "input1".
-    #     # Messages sent to other inputs, or to the default, will be discarded
-    #     if message.input_name == "input1":
-    #         print("the data in the message received on input1 was ")
-    #         print(message.data)
-    #         print("custom properties are")
-    #         print(message.custom_properties)
-    #         print("forwarding mesage to output1")
-    #         await client.send_message_to_output(message, "output1")
-
-    # try:
-    #     # Set handler on the client
-    #     client.on_message_received = receive_message_handler
-    # except:
-    #     # Cleanup if failure occurs
-    #     client.shutdown()
-    #     raise
-
     return client
 
-#BUG: 
-# /main.py:69: RuntimeWarning: coroutine 'IoTHubModuleClient.send_message_to_output' was never awaited
-#   ioclient.send_message_to_output(message, "output1")
-# RuntimeWarning: Enable tracemalloc to get the object allocation traceback
-# BUG: cannot send_message_to_output, battery module unable to receive messages
-# TODO: study python async await
+""" 
+Main routine of this module
+"""
 async def run_sample(ioclient):
     # Customize this coroutine to do whatever tasks the module initiates
-    # e.g. sending messages
+    
+    # initialise mqtt client and message queue to receive data asynchronously in a synchronous channel
     mqtt_client = mqtt.Client()
     message_queue = multiprocessing.Queue()
     
-    # mqtt connect event handler
+    # mqtt connect event handlers
     def on_connect(client, user_data, flags, rc):
         print("Connected to MQTT Broker")
         mqtt_client.subscribe(mqtt_topic)
@@ -69,6 +52,7 @@ async def run_sample(ioclient):
         print(rc)
     
     def on_message(client, user_data, msg):
+        # when message is received update the timestamp with the current time and encapsulate it into a Message object
         payload = msg.payload.decode()
         print("Message received from MQTT Broker")
         print("Topic: {}".format(msg.topic))
@@ -79,6 +63,7 @@ async def run_sample(ioclient):
         message = Message(payload_time)
         print("Message sent upstream {}".format(message))
 
+        # input into message queue
         message_queue.put(message)
 
     mqtt_client.on_connect = on_connect
@@ -88,14 +73,13 @@ async def run_sample(ioclient):
     mqtt_client.connect(mqtt_broker, mqtt_port)
     mqtt_client.loop_start()
 
+    # retrieves the first task from the message queue and sends to the output to next module
     while True:
         message = message_queue.get()
         print(message)
         print("Sending to output1..........")
         await ioclient.send_message_to_output(message, "output1")
         
-
-    
 
 def main():
     if not sys.version >= "3.5.3":
