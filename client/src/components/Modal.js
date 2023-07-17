@@ -12,6 +12,7 @@ function Modal({id}) {
 
     return day + "/" + month + "/" + year
   }
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -28,11 +29,12 @@ function Modal({id}) {
 
   return (
     <div className='modalcontainer' scroll="no">
-    {id ? (
-      <p className='modaltitle'>Battery ID: {id}</p>
-    ):(
-      <p className='modaltitle'>Click on details to show graphs</p>
-    )}
+
+      {id ? (
+        <p className='modaltitle'>Battery ID: {id}</p>
+      ):(
+        <p className='modaltitle'>Click on details to show graphs</p>
+      )}
 
       <p className='modalp'>Internal Impedance</p>
       <LineChart width={350} height={180} data={data} margin={{ top: 0, right: 20, bottom: 0, left: 0 }}>

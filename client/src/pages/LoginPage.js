@@ -58,7 +58,6 @@ const LoginPage = () => {
               className='input'
               onChange={handlePasswordChange}
               autoComplete='off'
-              
             />
           </div>
           <button type="submit" className='loginbutton' style={{ fontWeight:'700', cursor:'pointer'}}>Login</button>

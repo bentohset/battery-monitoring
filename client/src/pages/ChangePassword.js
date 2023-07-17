@@ -15,8 +15,6 @@ function ChangePassword() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Perform authentication logic
-        // Here, you can make an API request to your backend for authentication
         const requestBody = {
             new_password: password
         };
@@ -40,24 +38,28 @@ function ChangePassword() {
         });
     
     };
+
   return (
     <div>
         <h2>Change Password</h2>
         <form onSubmit={handleSubmit}>
             <div>
-            <label htmlFor="password">Password:</label>
-            <input
-                type="text"
-                id="password"
-                value={password}
-                onChange={handlePasswordChange}
-            />
+                <label htmlFor="password">Password:</label>
+                <input
+                    type="text"
+                    id="password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                />
             </div>
-        <button type="submit">Change</button>
+            
+            <button type="submit">Change</button>
         </form>
+
         <button className='btn' onClick={() => navigate('/')}>
             Back to Login
         </button>
+
         {passwordChanged ? (
             <p>Password changed</p>
         ): (<></>)}

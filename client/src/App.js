@@ -10,24 +10,23 @@ import { useAuth } from './hooks/auth';
 const App = () => {
   const { cookies } = useAuth()
 
-
   return (
     <>
-    <Routes>
-      {cookies.token ? (
-        <>
-          <Route path="/" element={<HomePage/>} />
-        </>
-      ) : (
-        <>
-          <Route path="/" element={<LoginPage/>} />
-          <Route path="/register-page" element={<RegisterPage/>} />
-          <Route path="/forgot-password" element={<ForgotPassword/>}/>
-          <Route path="/auth/reset/:token" element={<ChangePassword/>}/>
-        </>
-      )}
-    </Routes>
- </>
+      <Routes>
+        {cookies.token ? (
+          <>
+            <Route path="/" element={<HomePage/>} />
+          </>
+        ) : (
+          <>
+            <Route path="/" element={<LoginPage/>} />
+            <Route path="/register-page" element={<RegisterPage/>} />
+            <Route path="/forgot-password" element={<ForgotPassword/>}/>
+            <Route path="/auth/reset/:token" element={<ChangePassword/>}/>
+          </>
+        )}
+      </Routes>
+    </>
   );
 };
 

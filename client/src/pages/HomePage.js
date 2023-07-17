@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeftOnRectangleIcon, Bars3Icon } from '@heroicons/react/24/solid'
 import '../styles/home.css'
 import Modal from '../components/Modal';
 import { useAuth } from '../hooks/auth';
@@ -10,12 +9,7 @@ const HomePage = () => {
   const { logout } = useAuth()
 
   const handleLogout = () => {
-    // Perform logout logic
-    // Here, you can clear any authentication tokens or user data
-
-    // Call the onLogout function to update the login status
     logout()
-    // Redirect to the login page
   };
 
   const showModal = (id) => {
@@ -67,7 +61,9 @@ const HomePage = () => {
       </nav>
 
       <div className='tcontainer'>
+      
         <Modal id={id}/>
+
         <div className='tablecontainer'> 
           <table >
             <thead className='header'>
@@ -104,12 +100,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-
-
-//   tablerow: {
-//     borderBottom: "1px solid #ddd"
-
-//   },
-//   tablerow:hover
-// }
