@@ -1,7 +1,6 @@
 from app.extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
-# | id(int) | email(citext) | password(varchar) | is_requesting_resest(boolean)
 class User(db.Model):
     __tablename__ = "users"
 
@@ -13,7 +12,7 @@ class User(db.Model):
     def __init__(self, email:str, password_str:str):
         self.email = email
         self.password = self._generate_password_hash(password_str)
-
+    
     def is_password_correct(self, password_str:str):
         return check_password_hash(self.password, password_str)
 

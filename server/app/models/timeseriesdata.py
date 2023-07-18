@@ -1,7 +1,7 @@
 from app.extensions import db
 from datetime import datetime
 
-# | id | battery_id(int) | ble_uuid(int) | humidity(numeric/decimal) | temperature(numeric) 
+# | id | battery_id(int) | ble_uuid(int) | humidity(numeric) | temperature(numeric) 
 # | voltage_open_circuit(numeric) | internal_series_resistance(numeric) | internal_impedance(numeric) | 
 class TimeSeriesData(db.Model):
     """Read only, data retrieved from hardware

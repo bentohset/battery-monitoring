@@ -37,6 +37,7 @@ def create_app():
     def test():
         return jsonify({'message': 'hello backend'}), status.HTTP_200_OK
 
+    # creates database and tables if not already existing
     with app.app_context():
         db.create_all()
 

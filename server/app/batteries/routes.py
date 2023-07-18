@@ -12,6 +12,14 @@ from app.models.timeseriesdata import TimeSeriesData
 ## get all battery
 @battery_bp.route("/", methods = ["GET"])
 def get_all_data():
+    """
+    Retrieves list of all batteries
+    
+    Returns:
+        list: A list of battery objects with fields id, shelf_id and container_id
+
+    """
+
     batteries = Battery.query.all()
 
     result = []
@@ -24,9 +32,24 @@ def get_all_data():
 
     return jsonify(result), status.HTTP_200_OK
 
+
 # gets data of battery with battery id, returns array of readings sorted by time ascending
 @battery_bp.route("/<battery_id>", methods = ["GET"])
 def get_by_id(battery_id):
+    """
+    Retrieves timeseriesdata for a specific battery by ID
+    
+    Fetches data from readings table based on the battery id and returns an array of objects
+
+    Args:
+        battery_id (int): ID of the battery which acts as the foregin key
+
+    Returns:
+        array: list of objects containing battery readings ordered by time ascending
+
+    Raises:
+        404 Not Found: When battery_id provided does not exist within the database
+    """
     data = TimeSeriesData.query.filter_by(battery_id=battery_id).order_by(TimeSeriesData.timestamp.asc()).all()
 
     if not data:
@@ -46,9 +69,19 @@ def get_by_id(battery_id):
 
     return jsonify(result), status.HTTP_200_OK
 
+
 ## get current data / latest data for each battery
 @battery_bp.route("/table", methods = ["GET"])
 def get_recent():
+    """
+    Retrieve all latest battery data unique by battery ID
+
+    Gets latest data for each unique battery ID and sorts it by battery id ascending
+    
+    Returns:
+        array: an array of unique objects of latest battery data ordered by battery_id
+    
+    """
     result = []
     b = aliased(Battery, name='b')
     r = aliased(TimeSeriesData, name='r')
