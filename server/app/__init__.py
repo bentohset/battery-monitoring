@@ -5,6 +5,12 @@ import os
 from app.extensions import db, mail
 from app.common import status
 
+"""
+Function which creates the app with env variables, db and extensions
+Exported to and called in main process
+
+Returns a Flask app run by main process
+"""
 def create_app():
     app = Flask(__name__)
     cors = CORS(app)

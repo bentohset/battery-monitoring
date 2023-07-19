@@ -8,5 +8,7 @@ class Battery(db.Model):
     container_id = db.Column(db.Integer)
 
     def __init__(self, shelf_id:int, container_id:int):
+        """Creates a battery instance with shelf id and container id"""
+        
         self.shelf_id = shelf_id
         self.container_id = container_id

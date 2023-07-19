@@ -1,3 +1,5 @@
+"""NOTE: functions in this file are not used yet, password reset flow needs to be reimplemented with security enhanced"""
+
 import jwt
 from flask import current_app
 from datetime import datetime, timedelta, timezone

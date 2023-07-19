@@ -22,7 +22,10 @@ class TimeSeriesData(db.Model):
     battery = db.relationship('Battery', backref=db.backref('readings', lazy=True))
 
     def __init__(self, battery_id:int, ble_uuid:str, humidity:float, temp:float, isr:float, ii:float, timestamp:str ):
-        """For testing purposes"""
+        """
+        For testing purposes, in production is read-only
+        Creates a reading instance with appropriate fields and current timestamp
+        """
         
         self.battery_id = battery_id
         self.ble_uuid = ble_uuid
